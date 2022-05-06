@@ -66,6 +66,27 @@ public class MyLL {
 		System.out.println("Middle Element: " + slow.data);
 	}
 
+//	https://practice.geeksforgeeks.org/problems/merge-k-sorted-linked-lists/1/
+	//Function to merge K sorted linked list.
+    Node mergeKList(Node[]arr,int K)
+    {
+        int l = 0;
+        int r = K-1;
+        
+
+        while(l<r)
+        {
+            arr[l] = sortedMerge(arr[l], arr[r]);
+            l++;
+            r--;
+            if(l>=r)
+            {
+                l = 0;
+            }
+        }
+        return arr[0];
+    }
+	
 //	https://practice.geeksforgeeks.org/problems/merge-two-sorted-linked-lists/1#
 	static Node sortedMerge(Node head1, Node head2) {
 		// This is a "method-only" submission.
@@ -193,8 +214,8 @@ public class MyLL {
 		return -1;
 	}
 
-	//Only for reference -> Approach - 2
-	static void removeLoop(Node listNode, Node loopNode) {
+	// Only for reference -> Approach - 2
+	static void removeLoop(Node Node, Node loopNode) {
 		Node temp = loopNode;
 		int size = 1;
 		while (loopNode.next != temp)// finding size of loop
@@ -203,8 +224,8 @@ public class MyLL {
 			size++;
 		}
 
-		Node slow = listNode; // listNode is head
-		Node fast = listNode;
+		Node slow = Node; // Node is head
+		Node fast = Node;
 
 		for (int i = 0; i < size; i++) {
 			fast = fast.next;
@@ -217,6 +238,81 @@ public class MyLL {
 		}
 		fast.next = null;
 
+	}
+
+//	https://practice.geeksforgeeks.org/problems/remove-loop-in-linked-list/1#
+	// Function to remove a loop in the linked list.
+	public static void removeLoop(Node head) {
+		if (head == null)
+			return;
+
+		Node slow = head;
+		Node fast = head;
+
+		while (fast != null && fast.next != null) {
+			slow = slow.next;
+			fast = fast.next.next;
+
+			if (slow == fast) {
+				removeLoopUtil(head, fast);
+				return;
+			}
+		}
+
+		// Loop not found
+		return;
+	}
+
+	static void removeLoopUtil(Node head, Node fast) {
+		Node slow = head;
+
+		if (slow == fast) // Explicit handling for Circular Linked List
+		{
+			while (fast.next != slow) {
+				fast = fast.next;
+			}
+
+			fast.next = null;
+			return;
+		}
+
+		while (slow.next != fast.next) {
+			slow = slow.next;
+			fast = fast.next;
+		}
+
+		fast.next = null;
+	}
+
+//	https://leetcode.com/problems/add-two-numbers/
+	public Node addTwoNumbers(Node l1, Node l2) {
+		Node result = null;
+		Node curr = result;
+		int carry = 0;
+
+		while (!(l1 == null && l2 == null)) {
+			int a = (l1 == null) ? 0 : l1.data;
+			int b = (l2 == null) ? 0 : l2.data;
+			int sum = carry + a + b;
+			carry = sum / 10;
+			if (result == null) {
+				result = new Node(sum % 10);
+				curr = result;
+			} else {
+				curr.next = new Node(sum % 10);
+				curr = curr.next;
+			}
+			if (l1 != null)
+				l1 = l1.next;
+			if (l2 != null)
+				l2 = l2.next;
+
+		}
+		if (carry != 0) {
+			curr.next = new Node(carry);
+		}
+
+		return result;
 	}
 
 	public static void main(String[] args) {
