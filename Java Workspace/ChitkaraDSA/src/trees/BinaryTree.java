@@ -1,5 +1,6 @@
 package trees;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -345,6 +346,121 @@ public class BinaryTree {
 			System.out.println();
 		}
 	}
+	
+//	https://practice.geeksforgeeks.org/problems/root-to-leaf-path-sum/1/
+	boolean hasPathSum(Node root, int S) {
+        int pendingSum = S - root.data;
+        if(pendingSum == 0 && root.left == null && root.right == null)
+        {
+            return true;
+        }
+        
+        boolean foundInLeft = false;
+        boolean foundInRight = false;
+        
+        if(root.left != null)
+        {
+            foundInLeft = hasPathSum(root.left, pendingSum);
+        }
+        
+        if(root.right != null)
+        {
+            foundInRight = hasPathSum(root.right, pendingSum);
+        }
+        
+        return foundInLeft || foundInRight;
+    }
+	
+//	https://practice.geeksforgeeks.org/problems/paths-from-root-with-a-specified-sum/1/
+	public static ArrayList<ArrayList<Integer>> printPaths(Node root, int sum)
+    {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        ArrayList<Integer> currentPath = new ArrayList<>();
+        
+        printPathsUtil(root, sum, currentPath, result);
+        
+        return result;
+    }
+    
+    static void printPathsUtil(Node root, int sum, ArrayList<Integer> currentPath, ArrayList<ArrayList<Integer>> result)
+    {
+        int pendingSum = sum - root.data;
+        
+        currentPath.add(root.data);
+        
+        if(pendingSum == 0)
+        {
+            //Create a copy of the currentPath and Save
+            //To avoid unrequired updation of the same object as we are working on it
+            result.add(new ArrayList<>(currentPath));
+        }
+        
+        if(root.left != null)
+        {
+            printPathsUtil(root.left, pendingSum, currentPath, result);
+        }
+        
+        if(root.right != null)
+        {
+            printPathsUtil(root.right, pendingSum, currentPath, result);
+        }
+        
+        //Remove the last element and move back to parent
+        currentPath.remove(currentPath.size() - 1);
+    }
+    
+//    --------------Max Path Sum--------------
+//    https://practice.geeksforgeeks.org/problems/maximum-path-sum-from-any-node/1/
+    int maxSum = Integer.MIN_VALUE;
+    int findMaxSum(Node node)
+    {
+        findMaxSumUtil(node);
+        return maxSum;
+    }
+    
+    int findMaxSumUtil(Node root)
+    {
+        if(root == null)
+            return 0;
+        
+        int leftMaxSum = findMaxSumUtil(root.left);
+        int rightMaxSum = findMaxSumUtil(root.right);
+        
+        int max_case123 = Math.max(root.data, root.data + Math.max(leftMaxSum, rightMaxSum));
+        
+        int maxAllcases = Math.max(max_case123, leftMaxSum + root.data + rightMaxSum);
+        
+        maxSum = Math.max(maxSum, maxAllcases);
+        
+        return max_case123;
+    }
+    
+//  --------------DIAMETER--------------
+    int heightZeroWhenEmpty(Node root) {
+		if (root == null)
+			return 0;
+
+		return 1 + Math.max(heightZeroWhenEmpty(root.left), heightZeroWhenEmpty(root.right));
+
+	}
+    
+//    https://practice.geeksforgeeks.org/problems/diameter-of-binary-tree/1/
+    int diameter(Node root)
+    {
+    	if(root == null)
+    		return 0;
+    	
+    	//get the height of Sub-Trees
+    	int lstHeight = heightZeroWhenEmpty(root.left);
+    	int rstHeight = heightZeroWhenEmpty(root.right);
+    	
+    	//get Diameters of Sub-Trees
+    	int lstDia = diameter(root.left);
+    	int rstDia = diameter(root.right);
+    	
+    	return Math.max(lstHeight + 1 + rstHeight, Math.max(lstDia, rstDia));
+    	
+    }
 
 	public static void main(String[] args) {
 		BinaryTree bt = new BinaryTree(2); // Create a Binary Tree with 2 as the root.
@@ -425,6 +541,9 @@ public class BinaryTree {
 		System.out.println("====VERTICAL ORDER====");
 
 		bt.verticalOrder(bt.root);
+		
+		System.out.print("Diameter: ");
+		System.out.println(bt.diameter(bt.root));
 
 	}
 }
