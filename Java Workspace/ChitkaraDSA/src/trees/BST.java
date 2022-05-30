@@ -137,15 +137,46 @@ public class BST {
 		if (n1 > root.data && n2 > root.data) {
 			return lcaBST(root.right, n1, n2);
 		}
-		
+
 //		this is the case when -> root.data == n1 
 //		or, root.data == n2 
 //		or, one element is smaller and the other is greater
 //		So, basically these are all the cases where our current element will be LCA
 		return root; // element found
-
 	}
 
+//	https://practice.geeksforgeeks.org/problems/check-for-bst/1/#
+	boolean isBSTUsingMinMax(BSTNode root)
+	{
+		if(root == null)
+			return true;
+		
+		if(root.left != null && getMax(root.left) > root.data)
+			return false;
+		
+		if(root.right != null && getMin(root.right) < root.data)
+			return false;
+		
+		return isBSTUsingMinMax(root.left) && isBSTUsingMinMax(root.right);
+	}
+
+	boolean isBSTUtil(BSTNode root, int min, int max)
+	{
+		if(root == null)
+			return true;
+		
+		if(root.data < min || root.data > max)
+			return false;
+		
+		return (isBSTUtil(root.left, min, root.data - 1) &&
+				isBSTUtil(root.right, root.data + 1, max));
+	}
+	
+	boolean isBST(BSTNode root)
+	{
+		return isBSTUtil(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+	}
+	
 	public static void main(String[] args) {
 		BST bst = new BST(15);
 //		bst.root.left = new BSTNode(10);
@@ -171,9 +202,17 @@ public class BST {
 
 		System.out.println(bst.getMin(bst.root));
 		System.out.println(bst.getMax(bst.root));
-		
+
 		System.out.println(bst.lcaBST(bst.root, 3, 30).data);
 		System.out.println(bst.lcaBST(bst.root, 3, 12).data);
+		
+		System.out.println(bst.isBSTUsingMinMax(bst.root));
+		System.out.println(bst.isBST(bst.root));
+		
+		bst.root.right.right.right.right = new BSTNode(9); //distorting the BST
+		System.out.println(bst.isBSTUsingMinMax(bst.root));
+		
+		System.out.println(bst.isBST(bst.root));
 
 	}
 }

@@ -1,6 +1,7 @@
 package trees;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -271,8 +272,8 @@ public class BinaryTree {
 			for (int i = 0; i < n; i++) {
 
 				Node temp = q.poll();
-				
-				//Print only the first element of each level
+
+				// Print only the first element of each level
 				if (i == 0)
 					System.out.print(temp.data + " ");
 
@@ -346,121 +347,226 @@ public class BinaryTree {
 			System.out.println();
 		}
 	}
-	
+
 //	https://practice.geeksforgeeks.org/problems/root-to-leaf-path-sum/1/
 	boolean hasPathSum(Node root, int S) {
-        int pendingSum = S - root.data;
-        if(pendingSum == 0 && root.left == null && root.right == null)
-        {
-            return true;
-        }
-        
-        boolean foundInLeft = false;
-        boolean foundInRight = false;
-        
-        if(root.left != null)
-        {
-            foundInLeft = hasPathSum(root.left, pendingSum);
-        }
-        
-        if(root.right != null)
-        {
-            foundInRight = hasPathSum(root.right, pendingSum);
-        }
-        
-        return foundInLeft || foundInRight;
-    }
-	
+		int pendingSum = S - root.data;
+		if (pendingSum == 0 && root.left == null && root.right == null) {
+			return true;
+		}
+
+		boolean foundInLeft = false;
+		boolean foundInRight = false;
+
+		if (root.left != null) {
+			foundInLeft = hasPathSum(root.left, pendingSum);
+		}
+
+		if (root.right != null) {
+			foundInRight = hasPathSum(root.right, pendingSum);
+		}
+
+		return foundInLeft || foundInRight;
+	}
+
 //	https://practice.geeksforgeeks.org/problems/paths-from-root-with-a-specified-sum/1/
-	public static ArrayList<ArrayList<Integer>> printPaths(Node root, int sum)
-    {
-        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
-        ArrayList<Integer> currentPath = new ArrayList<>();
-        
-        printPathsUtil(root, sum, currentPath, result);
-        
-        return result;
-    }
-    
-    static void printPathsUtil(Node root, int sum, ArrayList<Integer> currentPath, ArrayList<ArrayList<Integer>> result)
-    {
-        int pendingSum = sum - root.data;
-        
-        currentPath.add(root.data);
-        
-        if(pendingSum == 0)
-        {
-            //Create a copy of the currentPath and Save
-            //To avoid unrequired updation of the same object as we are working on it
-            result.add(new ArrayList<>(currentPath));
-        }
-        
-        if(root.left != null)
-        {
-            printPathsUtil(root.left, pendingSum, currentPath, result);
-        }
-        
-        if(root.right != null)
-        {
-            printPathsUtil(root.right, pendingSum, currentPath, result);
-        }
-        
-        //Remove the last element and move back to parent
-        currentPath.remove(currentPath.size() - 1);
-    }
-    
+	public static ArrayList<ArrayList<Integer>> printPaths(Node root, int sum) {
+		ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+		ArrayList<Integer> currentPath = new ArrayList<>();
+
+		printPathsUtil(root, sum, currentPath, result);
+
+		return result;
+	}
+
+	static void printPathsUtil(Node root, int sum, ArrayList<Integer> currentPath,
+			ArrayList<ArrayList<Integer>> result) {
+		int pendingSum = sum - root.data;
+
+		currentPath.add(root.data);
+
+		if (pendingSum == 0) {
+			// Create a copy of the currentPath and Save
+			// To avoid unrequired updation of the same object as we are working on it
+			result.add(new ArrayList<>(currentPath));
+		}
+
+		if (root.left != null) {
+			printPathsUtil(root.left, pendingSum, currentPath, result);
+		}
+
+		if (root.right != null) {
+			printPathsUtil(root.right, pendingSum, currentPath, result);
+		}
+
+		// Remove the last element and move back to parent
+		currentPath.remove(currentPath.size() - 1);
+	}
+
 //    --------------Max Path Sum--------------
 //    https://practice.geeksforgeeks.org/problems/maximum-path-sum-from-any-node/1/
-    int maxSum = Integer.MIN_VALUE;
-    int findMaxSum(Node node)
-    {
-        findMaxSumUtil(node);
-        return maxSum;
-    }
-    
-    int findMaxSumUtil(Node root)
-    {
-        if(root == null)
-            return 0;
-        
-        int leftMaxSum = findMaxSumUtil(root.left);
-        int rightMaxSum = findMaxSumUtil(root.right);
-        
-        int max_case123 = Math.max(root.data, root.data + Math.max(leftMaxSum, rightMaxSum));
-        
-        int maxAllcases = Math.max(max_case123, leftMaxSum + root.data + rightMaxSum);
-        
-        maxSum = Math.max(maxSum, maxAllcases);
-        
-        return max_case123;
-    }
-    
+	int maxSum = Integer.MIN_VALUE;
+
+	int findMaxSum(Node node) {
+		findMaxSumUtil(node);
+		return maxSum;
+	}
+
+	int findMaxSumUtil(Node root) {
+		if (root == null)
+			return 0;
+
+		int leftMaxSum = findMaxSumUtil(root.left);
+		int rightMaxSum = findMaxSumUtil(root.right);
+
+		int max_case123 = Math.max(root.data, root.data + Math.max(leftMaxSum, rightMaxSum));
+
+		int maxAllcases = Math.max(max_case123, leftMaxSum + root.data + rightMaxSum);
+
+		maxSum = Math.max(maxSum, maxAllcases);
+
+		return max_case123;
+	}
+
 //  --------------DIAMETER--------------
-    int heightZeroWhenEmpty(Node root) {
+	int heightZeroWhenEmpty(Node root) {
 		if (root == null)
 			return 0;
 
 		return 1 + Math.max(heightZeroWhenEmpty(root.left), heightZeroWhenEmpty(root.right));
 
 	}
-    
+
 //    https://practice.geeksforgeeks.org/problems/diameter-of-binary-tree/1/
-    int diameter(Node root)
-    {
-    	if(root == null)
-    		return 0;
-    	
-    	//get the height of Sub-Trees
-    	int lstHeight = heightZeroWhenEmpty(root.left);
-    	int rstHeight = heightZeroWhenEmpty(root.right);
-    	
-    	//get Diameters of Sub-Trees
-    	int lstDia = diameter(root.left);
-    	int rstDia = diameter(root.right);
-    	
-    	return Math.max(lstHeight + 1 + rstHeight, Math.max(lstDia, rstDia));
-    	
-    }
+	int diameter(Node root) {
+		if (root == null)
+			return 0;
+
+		// get the height of Sub-Trees
+		int lstHeight = heightZeroWhenEmpty(root.left);
+		int rstHeight = heightZeroWhenEmpty(root.right);
+
+		// get Diameters of Sub-Trees
+		int lstDia = diameter(root.left);
+		int rstDia = diameter(root.right);
+
+		return Math.max(lstHeight + 1 + rstHeight, Math.max(lstDia, rstDia));
+
+	}
+
+	int maxDia = Integer.MIN_VALUE;
+
+	int heightForDiameter(Node root) {
+		if (root == null)
+			return 0;
+
+		int leftHeight = heightForDiameter(root.left);
+		int rightHeight = heightForDiameter(root.right);
+
+		maxDia = Math.max(maxDia, 1 + leftHeight + rightHeight);
+
+		return 1 + Math.max(leftHeight, rightHeight);
+	}
+
+	int diameterOptimized(Node root) {
+		maxDia = Integer.MIN_VALUE;
+		if (root == null)
+			return 0;
+
+		heightForDiameter(root);
+		return maxDia;
+	}
+
+//  --------------Binary Tree to Doubly Linked List--------------
+//    https://practice.geeksforgeeks.org/problems/binary-tree-to-dll/1
+	Node head = null;
+	Node prev = null;
+
+	// Function to convert binary tree to doubly linked list and return it.
+	Node bToDLL(Node root) {
+		bstToDLLUtil(root);
+		return head;
+	}
+
+	void bstToDLLUtil(Node root) {
+		if (root == null)
+			return;
+
+		bstToDLLUtil(root.left);
+
+		if (prev == null) {
+			head = root;
+			prev = root;
+		} else {
+			root.left = prev;
+			prev.right = root;
+			prev = root;
+		}
+
+		bstToDLLUtil(root.right);
+	}
+
+//    --------------Print all nodes at distance k from target--------------
+//    https://practice.geeksforgeeks.org/problems/nodes-at-given-distance-in-binary-tree/1#
+	public static ArrayList<Integer> KDistanceNodes(Node root, int target, int k) {
+		ArrayList<Integer> result = new ArrayList<>();
+		if (root == null || k < 0)
+			return result;
+
+		KDistanceNodesUtil(root, target, k, result);
+		Collections.sort(result);
+		return result;
+
+	}
+
+	static int KDistanceNodesUtil(Node root, int target, int k, ArrayList<Integer> result) {
+		if (root == null)
+			return -1;
+
+		if (root.data == target) {
+			KDistanceNodesInSubtree(root, k, result);
+			return 0;
+		}
+
+		int leftDist = KDistanceNodesUtil(root.left, target, k, result);
+		if (leftDist != -1)// we have found our node in left side
+		{
+			if (leftDist + 1 == k) {
+				result.add(root.data);
+			} else {
+				KDistanceNodesInSubtree(root.right, k - 2 - leftDist, result);
+			}
+
+			return leftDist + 1;
+		}
+
+		int rightDist = KDistanceNodesUtil(root.right, target, k, result);
+		if (rightDist != -1)// we have found our node in right side
+		{
+			if (rightDist + 1 == k) {
+				result.add(root.data);
+			} else {
+				KDistanceNodesInSubtree(root.left, k - 2 - rightDist, result);
+			}
+
+			return rightDist + 1;
+		}
+
+		// element not found
+		return -1;
+	}
+
+	static void KDistanceNodesInSubtree(Node root, int k, ArrayList<Integer> result) {
+		if (root == null)
+			return;
+
+		if (k == 0) {
+			result.add(root.data);
+		}
+
+		KDistanceNodesInSubtree(root.left, k - 1, result);
+		KDistanceNodesInSubtree(root.right, k - 1, result);
+	}
 
 	public static void main(String[] args) {
 		BinaryTree bt = new BinaryTree(2); // Create a Binary Tree with 2 as the root.
@@ -530,7 +636,7 @@ public class BinaryTree {
 		System.out.println("====LEFT VIEW====");
 		bt.leftView(bt.root);
 		bt.leftView(bt.root);
-		
+
 		System.out.println("====LEFT VIEW Iterative====");
 		bt.leftViewIterative(bt.root);
 
@@ -541,9 +647,12 @@ public class BinaryTree {
 		System.out.println("====VERTICAL ORDER====");
 
 		bt.verticalOrder(bt.root);
-		
+
 		System.out.print("Diameter: ");
 		System.out.println(bt.diameter(bt.root));
+
+		System.out.print("Diameter Optimized: ");
+		System.out.println(bt.diameterOptimized(bt.root));
 
 	}
 }
